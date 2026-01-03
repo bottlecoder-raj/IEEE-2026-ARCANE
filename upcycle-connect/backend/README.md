@@ -82,3 +82,14 @@ Authorization: Bearer <your-jwt-token>
 4. Implement real-time features
 5. Add email notifications
 
+## Cleanup
+
+Removed leftover test/manual files to reduce repository clutter:
+
+- `backend/test-backend.js`
+- `backend/test-routes.js`
+- `backend/test-api.html`
+- `backend/TESTING.md`
+
+Files removed from the repository; they can be restored from previous commits if needed.
+

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { requestService } from '../services/request.service'
 
-const RequestModal = ({ request, onClose, isProvider }) => {
+const RequestModal = ({ request, onClose, isProvider, initialData }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -21,8 +21,17 @@ const RequestModal = ({ request, onClose, isProvider }) => {
         quantity: request.quantity || '',
         status: request.status || 'pending'
       })
+    } else if (initialData) {
+      // Pre-fill fields when opening modal from e.g. a material details page
+      setFormData({
+        title: initialData.title || '',
+        description: initialData.description || '',
+        materialId: initialData.materialId || '',
+        quantity: initialData.quantity || '',
+        status: initialData.status || 'pending'
+      })
     }
-  }, [request])
+  }, [request, initialData])
 
   const handleChange = (e) => {
     const { name, value } = e.target

@@ -6,6 +6,7 @@ import ProviderDashboard from './pages/ProviderDashboard'
 import SeekerDashboard from './pages/SeekerDashboard'
 import AddMaterial from './pages/AddMaterial'
 import BrowseMaterials from './pages/BrowseMaterials'
+import MaterialDetails from './pages/MaterialDetails'
 import Requests from './pages/Requests'
 import Analytics from './pages/Analytics'
 
@@ -74,6 +75,13 @@ function App() {
           }
         />
         <Route
+          path="/materials/:id"
+          element={
+            <ProtectedRoute allowedRoles={["provider", "seeker"]}>
+              <MaterialDetails />
+            </ProtectedRoute>
+          }
+        />        <Route
           path="/requests"
           element={
             <ProtectedRoute allowedRoles={['provider', 'seeker']}>
