@@ -153,31 +153,32 @@ export const materialService = {
       quantity: parseInt(quantity)
     })
 
-    // Insert into database
-    const { data, error } = await supabase
-      .from('materials')
-      .insert({
-        name,
-        description,
-        category: category.toLowerCase(),
-        quantity: parseInt(quantity),
-        condition: condition.toLowerCase(),
-        location: location || null,
-        latitude: latitude ? parseFloat(latitude) : null,
-        longitude: longitude ? parseFloat(longitude) : null,
-        provider_id: userId,
-        status: 'available',
-        carbon_saved: parseFloat(carbonSaved)
-      })
-      .select()
-      .single()
+    if (supabase && isSupabaseConfigured()) {
+      // Insert into database
+      const { data, error } = await supabase
+        .from('materials')
+        .insert({
+          name,
+          description,
+          category: category.toLowerCase(),
+          quantity: parseInt(quantity),
+          condition: condition.toLowerCase(),
+          location: location || null,
+          latitude: latitude ? parseFloat(latitude) : null,
+          longitude: longitude ? parseFloat(longitude) : null,
+          provider_id: userId,
+          status: 'available',
+          carbon_saved: parseFloat(carbonSaved)
+        })
+        .select()
+        .single()
 
-    if (error) {
-      const dbError = handleSupabaseError(error)
-      const err = new Error(dbError.message)
-      err.statusCode = dbError.statusCode
-      throw err
-    }
+      if (error) {
+        const dbError = handleSupabaseError(error)
+        const err = new Error(dbError.message)
+        err.statusCode = dbError.statusCode
+        throw err
+      }
 
       return formatMaterial(data)
     } else {

@@ -53,7 +53,8 @@ const Register = () => {
         setError(result.error || 'Registration failed')
       }
     } catch (err) {
-      setError('An error occurred during registration')
+      console.error('Registration error:', err)
+      setError(err.message || err.response?.data?.error || 'An error occurred during registration')
     } finally {
       setLoading(false)
     }

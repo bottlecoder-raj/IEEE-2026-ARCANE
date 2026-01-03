@@ -4,25 +4,25 @@ export const requestService = {
   // Get all requests
   getRequests: async (filters = {}) => {
     const response = await api.get('/requests', { params: filters })
-    return response.data
+    return response.data.requests || []
   },
 
   // Get single request by ID
   getRequestById: async (id) => {
     const response = await api.get(`/requests/${id}`)
-    return response.data
+    return response.data.request || null
   },
 
   // Create new material request (seeker only)
   createRequest: async (requestData) => {
     const response = await api.post('/requests', requestData)
-    return response.data
+    return response.data.request || response.data
   },
 
   // Update request status
   updateRequest: async (id, requestData) => {
     const response = await api.put(`/requests/${id}`, requestData)
-    return response.data
+    return response.data.request || response.data
   },
 
   // Delete request
@@ -34,13 +34,13 @@ export const requestService = {
   // Get requests by seeker
   getRequestsBySeeker: async (seekerId) => {
     const response = await api.get(`/requests/seeker/${seekerId}`)
-    return response.data
+    return response.data.requests || []
   },
 
   // Get requests for provider's materials
   getRequestsForProvider: async (providerId) => {
     const response = await api.get(`/requests/provider/${providerId}`)
-    return response.data
+    return response.data.requests || []
   }
 }
 

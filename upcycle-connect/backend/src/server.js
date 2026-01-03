@@ -1,5 +1,6 @@
 import app from './app.js'
 import { config } from './config/env.js'
+import { isSupabaseConfigured } from './config/supabaseClient.js'
 
 const PORT = config.port
 
@@ -9,6 +10,15 @@ app.listen(PORT, () => {
   console.log(`📍 Environment: ${config.nodeEnv}`)
   console.log(`🌐 CORS enabled for: ${config.corsOrigin}`)
   console.log(`📡 API available at: http://localhost:${PORT}/api`)
+  
+  // Check Supabase configuration
+  if (isSupabaseConfigured()) {
+    console.log(`✅ Supabase: Connected (${config.supabaseUrl})`)
+  } else {
+    console.log(`⚠️  Supabase: Not configured (using in-memory storage)`)
+    console.log(`   Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env to enable database`)
+  }
+  
   console.log(`\n📋 Available endpoints:`)
   console.log(`   POST   /api/auth/register`)
   console.log(`   POST   /api/auth/login`)

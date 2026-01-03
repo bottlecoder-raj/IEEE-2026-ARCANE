@@ -295,14 +295,31 @@ export const requestService = {
     const supabase = getSupabaseClient()
 
     if (supabase && isSupabaseConfigured()) {
-      // Join with materials table to get requests for provider's materials
+      // First get all material IDs for this provider
+      const { data: materials, error: materialsError } = await supabase
+        .from('materials')
+        .select('id')
+        .eq('provider_id', providerId)
+
+      if (materialsError) {
+        const dbError = handleSupabaseError(materialsError)
+        const err = new Error(dbError.message)
+        err.statusCode = dbError.statusCode
+        throw err
+      }
+
+      const materialIds = materials.map(m => m.id)
+
+      // If no materials, return empty array
+      if (materialIds.length === 0) {
+        return []
+      }
+
+      // Get all requests for these materials
       const { data, error } = await supabase
         .from('requests')
-        .select(`
-          *,
-          materials!inner(provider_id)
-        `)
-        .eq('materials.provider_id', providerId)
+        .select('*')
+        .in('material_id', materialIds)
         .order('created_at', { ascending: false })
 
       if (error) {
