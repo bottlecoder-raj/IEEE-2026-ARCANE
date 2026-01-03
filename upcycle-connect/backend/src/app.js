@@ -12,8 +12,16 @@ import impactRoutes from './routes/impact.routes.js'
 const app = express()
 
 // Middleware
+const allowedOrigins = (config.corsOrigin || '').split(',').map(o => o.trim()).filter(Boolean)
 app.use(cors({
-  origin: config.corsOrigin,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like curl or Postman)
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+    callback(new Error('Not allowed by CORS'))
+  },
   credentials: true
 }))
 

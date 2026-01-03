@@ -32,7 +32,7 @@ export const authService = {
         .from('users')
         .select('id, email')
         .eq('email', email)
-        .single()
+        .maybeSingle()
 
       if (existingUser) {
         const error = new Error('User with this email already exists')
@@ -133,7 +133,7 @@ export const authService = {
         .from('users')
         .select('id, email, name, role, location, password_hash, created_at, updated_at')
         .eq('email', email)
-        .single()
+        .maybeSingle()
 
       if (error || !user) {
         const err = new Error('Invalid email or password')

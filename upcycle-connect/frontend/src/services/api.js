@@ -37,6 +37,8 @@ api.interceptors.response.use(
     // For network errors (backend not running), don't crash the app
     if (!error.response && error.code === 'ERR_NETWORK') {
       console.warn('Backend API not available. Running in offline mode.')
+      // Normalize the error so UI can show a friendly message
+      error.response = { data: { error: 'Backend API not available' } }
     }
     return Promise.reject(error)
   }

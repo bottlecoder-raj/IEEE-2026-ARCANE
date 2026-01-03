@@ -14,6 +14,24 @@ app.listen(PORT, () => {
   // Check Supabase configuration
   if (isSupabaseConfigured()) {
     console.log(`✅ Supabase: Connected (${config.supabaseUrl})`)
+    // Verify credentials (lightweight check)
+    // Use dynamic import without top-level await so this works inside callback
+    import('./config/supabaseClient.js')
+      .then(({ verifySupabase }) => {
+        verifySupabase().then(result => {
+          if (!result.ok) {
+            console.warn(`⚠️ Supabase verification failed: ${result.message}`)
+            console.warn('   If you see "Invalid Supabase API key", set SUPABASE_SERVICE_ROLE_KEY in backend/.env to a valid service role key')
+          } else {
+            console.log('   Supabase verification passed')
+          }
+        }).catch(err => {
+          console.warn('⚠️ Supabase verification error:', err.message || err)
+        })
+      })
+      .catch(err => {
+        console.warn('⚠️ Could not import supabase client for verification:', err.message || err)
+      })
   } else {
     console.log(`⚠️  Supabase: Not configured (using in-memory storage)`)
     console.log(`   Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env to enable database`)

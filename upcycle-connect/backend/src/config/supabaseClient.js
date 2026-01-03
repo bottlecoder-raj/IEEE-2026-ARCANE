@@ -36,6 +36,7 @@ export const getSupabaseClient = () => {
 
 // Helper function to handle Supabase errors
 export const handleSupabaseError = (error) => {
+  // Some Postgres codes
   if (error.code === '23505') { // Unique violation
     return {
       message: 'Record already exists',
@@ -48,9 +49,37 @@ export const handleSupabaseError = (error) => {
       statusCode: 400
     }
   }
+
+  // Common Supabase / auth-level errors
+  const msg = (error.message || '').toString()
+  if (msg.toLowerCase().includes('invalid api key') || msg.toLowerCase().includes('invalid api-key')) {
+    return {
+      message: 'Invalid Supabase API key. Check SUPABASE_SERVICE_ROLE_KEY in your backend .env',
+      statusCode: 500
+    }
+  }
+
   return {
     message: error.message || 'Database error',
     statusCode: 500
+  }
+}
+
+// Verify Supabase connection by performing a lightweight query
+export const verifySupabase = async () => {
+  if (!isSupabaseConfigured()) {
+    return { ok: false, message: 'Supabase not configured (missing SUPABASE_URL or keys)' }
+  }
+
+  try {
+    // Try a minimal read to validate the credentials
+    const { data, error } = await supabase.from('users').select('id').limit(1).maybeSingle()
+    if (error) {
+      return { ok: false, message: error.message || 'Supabase query error' }
+    }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, message: err.message || 'Supabase verification failed' }
   }
 }
 

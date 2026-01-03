@@ -31,7 +31,7 @@ const Login = () => {
         setError(result.error || 'Login failed')
       }
     } catch (err) {
-      setError('An error occurred during login')
+      setError(err?.response?.data?.error || err?.message || 'An error occurred during login')
     } finally {
       setLoading(false)
     }

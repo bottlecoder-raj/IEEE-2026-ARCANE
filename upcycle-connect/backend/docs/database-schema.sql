@@ -20,6 +20,23 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 
 -- ============================================
+-- PROFILES TABLE (for Supabase Auth integration)
+-- This table links to Supabase Auth's built-in `auth.users` table via id
+CREATE TABLE IF NOT EXISTS profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  name VARCHAR(255),
+  role VARCHAR(50) NOT NULL CHECK (role IN ('provider','seeker')),
+  location VARCHAR(255),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for profiles
+CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
+CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
+
+-- ============================================
 -- MATERIALS TABLE
 -- ============================================
 CREATE TABLE IF NOT EXISTS materials (

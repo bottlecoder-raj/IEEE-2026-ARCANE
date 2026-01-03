@@ -16,6 +16,7 @@ export const config = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   
   // CORS Configuration
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000'
+  // Can be a comma-separated list of allowed origins (useful in development for localhost/127.0.0.1)
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000,http://127.0.0.1:3000'
 }
 
