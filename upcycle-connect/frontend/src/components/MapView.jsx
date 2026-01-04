@@ -23,27 +23,54 @@ const MapView = ({ materials }) => {
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
       }).addTo(mapInstanceRef.current)
+
+      // Ensure Leaflet lays out properly (useful if the map was hidden when initialized)
+      setTimeout(() => {
+        if (mapInstanceRef.current) mapInstanceRef.current.invalidateSize()
+      }, 0)
     }
 
     // Add markers for materials
     if (mapInstanceRef.current && materials) {
-      // Clear existing markers
-      mapInstanceRef.current.eachLayer((layer) => {
-        if (layer instanceof L.Marker) {
-          mapInstanceRef.current.removeLayer(layer)
-        }
-      })
+      try {
+        // Clear existing markers
+        mapInstanceRef.current.eachLayer((layer) => {
+          if (layer instanceof L.Marker) {
+            mapInstanceRef.current.removeLayer(layer)
+          }
+        })
 
-      // Add new markers
-      materials.forEach((material) => {
-        if (material.latitude && material.longitude) {
-          const marker = L.marker([material.latitude, material.longitude])
-            .addTo(mapInstanceRef.current)
-            .bindPopup(
-              `<b>${material.name}</b><br/>${material.category}<br/>${material.location}`
-            )
+        const bounds = L.latLngBounds([])
+
+        // Add new markers
+        materials.forEach((material) => {
+          const lat = material.latitude !== null && material.latitude !== undefined ? parseFloat(material.latitude) : null
+          const lng = material.longitude !== null && material.longitude !== undefined ? parseFloat(material.longitude) : null
+
+          if (lat !== null && lng !== null && !Number.isNaN(lat) && !Number.isNaN(lng)) {
+            L.marker([lat, lng])
+              .addTo(mapInstanceRef.current)
+              .bindPopup(
+                `<b>${material.name}</b><br/>${material.category}<br/>${material.location}`
+              )
+            bounds.extend([lat, lng])
+          }
+        })
+
+        // Fit map to markers if any, else keep default center
+        if (bounds.isValid()) {
+          mapInstanceRef.current.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 })
         }
-      })
+
+        // Ensure map properly renders (in case it was hidden when initialized)
+        setTimeout(() => {
+          if (mapInstanceRef.current) mapInstanceRef.current.invalidateSize()
+        }, 0)
+      } catch (err) {
+        // Log map errors for easier debugging
+        // eslint-disable-next-line no-console
+        console.error('Map rendering error:', err)
+      }
     }
 
     return () => {
