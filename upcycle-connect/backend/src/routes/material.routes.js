@@ -16,8 +16,8 @@ const router = express.Router()
 // Public routes
 router.get('/', getMaterials)
 router.get('/nearby', getNearbyMaterials)
-router.get('/:id', getMaterialById)
 router.get('/provider/:providerId', getMaterialsByProvider)
+router.get('/:id', getMaterialById)
 
 // Protected routes (provider only)
 router.post('/', authenticate, authorize('provider'), createMaterial)
